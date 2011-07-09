@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Concrete</title>
+
+	<script type="text/javascript">
+		module = null;
+		page = false;
+
+		function module_loaded() {
+			module = document.getElementById("module");
+			module.addEventListener("message", handle_message, false);
+
+			if (page)
+				init();
+		}
+
+		function page_loaded() {
+			page = true;
+
+			if (module)
+				init();
+		}
+
+		function init() {
+			module.postMessage("run");
+		}
+
+		function handle_message(message_event) {
+			alert(message_event.data);
+		}
+	</script>
+</head>
+
+<body onload="page_loaded()">
+	<div id="listener">
+		<script type="text/javascript">
+			document.getElementById("listener").addEventListener("load", module_loaded, true);
+		</script>
+
+		<embed name="nacl_module"
+		       id="module"
+		       width="0"
+		       height="0"
+		       src="concrete.nmf"
+		       type="application/x-nacl" />
+	</div>
+</body>
+
+</html>

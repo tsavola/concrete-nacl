@@ -1,0 +1,3 @@
+[submodule "concrete"]
+	path = concrete
+	url = git://github.com/tsavola/concrete.git
