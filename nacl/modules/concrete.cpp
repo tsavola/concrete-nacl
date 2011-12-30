@@ -7,18 +7,13 @@
  * version 2.1 of the License, or (at your option) any later version.
  */
 
-#include <concrete/objects/dict.hpp>
-#include <concrete/objects/internal.hpp>
-#include <concrete/objects/object.hpp>
-#include <concrete/objects/tuple.hpp>
+#include "concrete/modules/concrete.hpp"
 
 namespace concrete {
 
-static Object Test(const TupleObject &args, const DictObject &kwargs)
+Object ConcreteModule_Test(const TupleObject &args, const DictObject &kwargs)
 {
 	return args.get_item(0);
 }
 
 } // namespace
-
-CONCRETE_INTERNAL_FUNCTION(ConcreteModule_Test, Test)

@@ -7,8 +7,8 @@
  * version 2.1 of the License, or (at your option) any later version.
  */
 
-#ifndef NACL_IO_HTTP_HPP
-#define NACL_IO_HTTP_HPP
+#ifndef NACL_IO_URL_HPP
+#define NACL_IO_URL_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -18,20 +18,13 @@
 #include <ppapi/cpp/url_request_info.h>
 #include <ppapi/cpp/url_response_info.h>
 
-#include <concrete/io/http.hpp>
+#include <concrete/io/url.hpp>
 
 #include <nacl/event.hpp>
 
 namespace concrete {
 
-class NaClHTTPTransaction: public HTTPTransaction {
-	friend class HTTPTransaction;
-
-public:
-	NaClHTTPTransaction(HTTP::Method method, const StringObject &url, Buffer *request_content);
-	virtual ~NaClHTTPTransaction() throw () {}
-
-private:
+class NaClURLOpener: public URLOpener {
 	enum State {
 		Open,
 		Opening,
@@ -40,6 +33,22 @@ private:
 		Received,
 	};
 
+public:
+	NaClURLOpener(const StringObject &url, Buffer *response, Buffer *request);
+	virtual ~NaClURLOpener() throw () {}
+
+	virtual bool headers_received() { return m_state >= Opened; }
+	virtual bool content_consumable();
+	virtual bool content_received() { return m_state >= Received; }
+
+	virtual void suspend_until_headers_received() { suspend_until(Opened); }
+	virtual void suspend_until_content_consumable() { suspend_until_content_received(); }
+	virtual void suspend_until_content_received() { suspend_until(Received); }
+
+	virtual int  response_status() const { return m_response.GetStatusCode(); }
+	virtual long response_length() const { return m_response_length; }
+
+private:
 	void suspend_until(State objective);
 
 	State open();

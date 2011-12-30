@@ -26,10 +26,13 @@ def AppendOptCCFlags(env, is_debug=False):
 def MakeNaClModuleEnvironment(nacl_env, sources, module_name, arch_spec, is_debug=False):
   debug_name = 'dbg' if is_debug else 'opt'
   arch_name = '%s_%s' % nacl_utils.GetArchFromSpec(arch_spec)
+  variant_dir = '%s_%s' % (debug_name, arch_name)
   env = nacl_env.Clone()
   AppendOptCCFlags(env, is_debug)
   env.AppendArchFlags(arch_spec)
-  env.Append(LIBPATH='%s_%s/concrete/lib' % (debug_name, arch_name))
+  env.Append(
+    CPPPATH='%s/concrete/src' % variant_dir,
+    LIBPATH='%s/concrete/lib' % variant_dir)
   return env.NaClProgram('%s_%s%s' % (module_name,
                                       arch_name,
                                       '_dbg' if is_debug else ''),
@@ -67,10 +70,11 @@ def AllNaClModules(env, sources, module_name):
 
 env = make_nacl_env.NaClEnvironment(use_c_plus_plus_libs=True)
 env.Append(
-    CPPFLAGS=['-Iconcrete', '-I.', '-DCONCRETE_PORTABLE_BYTEORDER=true', '-DCONCRETE_TRACE'],
+    CPPFLAGS=['-Iconcrete/boost', '-I.', '-DCONCRETE_PORTABLE_BYTEORDER=true', '-DCONCRETE_TRACE'],
     LIBS=['concrete-core'])
 env.Replace(
-    CCFLAGS=['-Wall', '-pthread'],
+    CFLAGS=['-Wall', '-pthread'],
+    CCFLAGS=[],
     CXXFLAGS=['-std=gnu++0x'])
 
 AllNaClModules(
