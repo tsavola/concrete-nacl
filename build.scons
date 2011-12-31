@@ -1,83 +1,27 @@
-# -*- python -*-
-
-import os
-from glob import glob
+#! -*- python -*-
+#
+# Copyright (c) 2011 The Native Client Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 
 import make_nacl_env
 import nacl_utils
+import os
+from glob import glob
 
-def AppendOptCCFlags(env, is_debug=False):
-  if is_debug:
-    env.Append(CCFLAGS=['-O0',
-                        '-Werror',
-                        '-Wall',
-                        '-g',
-                       ])
-  else:
-    env.Append(CCFLAGS=['-O2',
-                        '-Werror',
-                        '-Wall',
-                        '-Wswitch-enum',
-                        '-fno-builtin',
-                        '-fno-stack-protector',
-                        '-fdiagnostics-show-option',
-                       ])
+nacl_env = make_nacl_env.NaClEnvironment(
+    use_c_plus_plus_libs=True, nacl_platform=os.getenv('NACL_TARGET_PLATFORM'))
 
-def MakeNaClModuleEnvironment(nacl_env, sources, module_name, arch_spec, is_debug=False):
-  debug_name = 'dbg' if is_debug else 'opt'
-  arch_name = '%s_%s' % nacl_utils.GetArchFromSpec(arch_spec)
-  variant_dir = '%s_%s' % (debug_name, arch_name)
-  env = nacl_env.Clone()
-  AppendOptCCFlags(env, is_debug)
-  env.AppendArchFlags(arch_spec)
-  env.Append(
-    CPPPATH='%s/concrete/src' % variant_dir,
-    LIBPATH='%s/concrete/lib' % variant_dir)
-  return env.NaClProgram('%s_%s%s' % (module_name,
-                                      arch_name,
-                                      '_dbg' if is_debug else ''),
-                         sources,
-                         variant_dir='%s_%s' % (debug_name, arch_name))
+nacl_env.Append(
+    CPPFLAGS=['-DCONCRETE_PORTABLE_BYTEORDER=true'],
+    CPPPATH=['-I.', '-Icore/src', '-Iconcrete/boost'],
+    CCFLAGS=['-std=gnu++0x'])
 
-def NaClModules(env, sources, module_name, is_debug=False):
-  return [
-      MakeNaClModuleEnvironment(
-          env,
-          sources,
-          module_name=module_name,
-          arch_spec=nacl_utils.ARCH_SPECS['x86-32'],
-          is_debug=is_debug),
-      MakeNaClModuleEnvironment(
-          env,
-          sources,
-          module_name=module_name,
-          arch_spec=nacl_utils.ARCH_SPECS['x86-64'],
-          is_debug=is_debug),
-  ]
+sources = glob('nacl/*.cpp') + \
+          glob('nacl/*/*.cpp') + \
+          glob('core/src/*.cpp') + \
+          glob('core/src/*/*.cpp') + \
+          glob('core/src/*/*/*.cpp') + \
+          glob('core/src/*/*/*/*.cpp')
 
-def AllNaClModules(env, sources, module_name):
-  opt_nexes = NaClModules(env, sources, module_name, is_debug=False)
-  env.GenerateNmf(target='%s.nmf' % module_name,
-                  source=opt_nexes,
-                  nexes={'x86-32': '%s_x86_32.nexe' % module_name,
-                         'x86-64': '%s_x86_64.nexe' % module_name})
-
-  dbg_nexes = NaClModules(env, sources, module_name, is_debug=True)
-  env.GenerateNmf(target='%s_dbg.nmf' % module_name,
-                  source=dbg_nexes,
-                  nexes={'x86-32': '%s_x86_32_dbg.nexe' % module_name,
-                         'x86-64': '%s_x86_64_dbg.nexe' % module_name})
-
-env = make_nacl_env.NaClEnvironment(use_c_plus_plus_libs=True)
-env.Append(
-    CPPFLAGS=['-Iconcrete/boost', '-I.', '-DCONCRETE_PORTABLE_BYTEORDER=true', '-DCONCRETE_TRACE'],
-    LIBS=['concrete-core'])
-env.Replace(
-    CFLAGS=['-Wall', '-pthread'],
-    CCFLAGS=[],
-    CXXFLAGS=['-std=gnu++0x'])
-
-AllNaClModules(
-    env,
-    glob('nacl/*.cpp') + glob('nacl/*/*.cpp'),
-    'concrete')
+nacl_env.AllNaClModules(sources, 'concrete')
