@@ -1,12 +1,10 @@
 Dependencies:
 
-  Native Client SDK 0.4
-  Google Chrome 13       (for testing)
-  svn                    (for downloading boost)
+  Native Client SDK platform 15
 
 Build instructions:
 
-  echo SDK=/path/to/native_client_sdk > config.mk
+  echo SDK=/path/to/nacl_sdk > config.mk
   ./bootstrap.sh
   make
 
