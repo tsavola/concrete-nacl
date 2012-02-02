@@ -1,10 +1,11 @@
-PLATFORM	:= pepper_15
+PLATFORM	:= pepper_16
+J		:= 1
 
 -include config.mk
 
 build:: scons.sh
 	@ $(MAKE) -C concrete concrete/prepare O=../core
-	@ bash scons.sh
+	@ bash scons.sh -j$(J)
 
 test:: examples/httpd.py
 	@ cd examples && ./httpd.py &
