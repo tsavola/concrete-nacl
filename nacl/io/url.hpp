@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011  Timo Savola
+ * Copyright (c) 2011, 2012  Timo Savola
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@
 
 namespace concrete {
 
+class NaClInstance;
+
 class NaClURLOpener: public URLOpener {
 	enum State {
 		Open,
@@ -34,7 +36,7 @@ class NaClURLOpener: public URLOpener {
 	};
 
 public:
-	NaClURLOpener(const StringObject &url, Buffer *response, Buffer *request);
+	NaClURLOpener(NaClInstance &, const StringObject &url, Buffer *response, Buffer *request);
 	virtual ~NaClURLOpener() throw () {}
 
 	virtual bool headers_received() { return m_state >= Opened; }
@@ -53,8 +55,10 @@ private:
 
 	State open();
 	State opening();
+	State opened(int32_t result);
 	State receive(bool recursion = false);
 	State receiving();
+	State received_some(int32_t result);
 
 	State                m_state;
 	EventCompletion      m_completion;

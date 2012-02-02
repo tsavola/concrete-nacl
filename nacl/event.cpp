@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011  Timo Savola
+ * Copyright (c) 2011, 2012  Timo Savola
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -11,7 +11,8 @@
 
 #include <ppapi/c/pp_errors.h>
 
-#include <concrete/util/assert.hpp>
+#include <concrete/context.hpp>
+#include <concrete/util/trace.hpp>
 
 #include <nacl/instance.hpp>
 
@@ -19,6 +20,8 @@ namespace concrete {
 
 void NaClEventLoop::wait(const EventTrigger &trigger, EventCallback *callback)
 {
+	Trace("NaClEventLoop.wait: callback=%p", callback);
+
 	trigger.completion.reset(&m_instance, callback);
 }
 
@@ -38,6 +41,12 @@ void EventCompletion::complete(int32_t result)
 {
 	auto instance = m_instance;
 	auto callback = m_event_callback;
+
+	ScopedInstance instance_activation(instance);
+
+	Trace("EventCompletion.complete: callback=%p", callback);
+
+	ScopedContext context_activation(instance->context());
 
 	m_result = result;
 	m_instance = NULL;

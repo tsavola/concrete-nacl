@@ -13,8 +13,8 @@ nacl_env = make_nacl_env.NaClEnvironment(
     use_c_plus_plus_libs=True, nacl_platform=os.getenv('NACL_TARGET_PLATFORM'))
 
 nacl_env.Append(
-    CPPFLAGS=['-DCONCRETE_PORTABLE_BYTEORDER=true'],
-    CPPPATH=['-I.', '-Icore/src', '-Iconcrete/boost'],
+    CPPFLAGS=['-DCONCRETE_PORTABLE_BYTEORDER=true', '-DCONCRETE_TRACE'],
+    CPPPATH=['.', 'core/src', 'concrete/boost'],
     CCFLAGS=['-std=gnu++0x'])
 
 sources = glob('nacl/*.cpp') + \

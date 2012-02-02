@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011  Timo Savola
+ * Copyright (c) 2011, 2012  Timo Savola
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,28 +17,40 @@
 #include <ppapi/cpp/var.h>
 
 #include <concrete/context.hpp>
+#include <concrete/util/noncopyable.hpp>
 
 #include <nacl/event.hpp>
 
 namespace concrete {
 
 class NaClInstance: public pp::Instance {
-	friend class EventCompletion;
-
 public:
+	static NaClInstance &Active() throw ();
+
 	explicit NaClInstance(PP_Instance instance);
 	virtual ~NaClInstance() {}
 
 	virtual void HandleMessage(const pp::Var &var_message);
 
-private:
-	void run();
+	Context &context() { return *m_context.get(); }
 	void execute();
+
+private:
+	void run(const std::string &param);
 	void do_execute(int32_t dummy);
 
 	pp::CompletionCallbackFactory<NaClInstance> m_callback_factory;
 	NaClEventLoop                               m_event_loop;
 	std::unique_ptr<Context>                    m_context;
+};
+
+class ScopedInstance: Noncopyable {
+public:
+	explicit ScopedInstance(NaClInstance *instance) throw ();
+	~ScopedInstance() throw ();
+
+private:
+	NaClInstance *m_instance;
 };
 
 } // namespace
