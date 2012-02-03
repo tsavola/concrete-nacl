@@ -5,6 +5,7 @@
 config.mk
 core/
 dbg_*/
+dist/
 examples/code.hex
 examples/httpd.py
 opt_*/

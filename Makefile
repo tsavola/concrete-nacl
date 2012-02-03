@@ -15,7 +15,7 @@ test:: examples/httpd.py
 		--user-data-dir="$(PWD)/.chrome" \
 		--disk-cache-dir="$(PWD)/.chrome/cache" \
 		--disk-cache-size=1 \
-		"http://localhost:5103/concrete.html"
+		"http://localhost:5103/example.html"
 	@ wget -q -O- "http://localhost:5103/?quit=1"
 
 examples/code.hex: examples/code.py
@@ -23,6 +23,12 @@ examples/code.hex: examples/code.py
 
 scons.sh examples/httpd.py:
 	./bootstrap.sh $(SDK) $(PLATFORM)
+
+dist::
+	rm -rf dist
+	mkdir -p dist
+	cp concrete_???_??_dbg.nexe concrete_dbg.nmf examples/code.hex dist/
+	cp example.html dist/index.html
 
 clean::
 	rm -rf core
@@ -32,3 +38,4 @@ clean::
 	rm -rf dbg_x86_32 dbg_x86_64 opt_x86_32 opt_x86_64
 	rm -f .sconsign.dblite
 	rm -f scons.sh examples/code.hex examples/httpd.py
+	rm -rf dist
