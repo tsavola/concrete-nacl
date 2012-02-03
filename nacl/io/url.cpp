@@ -29,8 +29,6 @@ NaClURLOpener::NaClURLOpener(NaClInstance &instance, const StringObject &url, Bu
 	m_response_received(0),
 	m_response_buffer(response)
 {
-	Trace("NaClURLOpener \"%s\"", url.c_str());
-
 	m_request.SetMethod(request ? "POST" : "GET");
 	m_request.SetURL(url.string());
 	m_request.SetAllowCrossOriginRequests(true);
@@ -53,14 +51,6 @@ void NaClURLOpener::suspend_until(State objective)
 	case Receiving: m_state = receiving(); break;
 	case Received:  assert(false);         break;
 	}
-
-#if 1
-	if (m_state == Received) {
-		Trace("NaClURLOpener: --- received content ---");
-		Trace("NaClURLOpener: %s", std::string(m_response_buffer->consumable_data(), m_response_buffer->consumable_size()));
-		Trace("NaClURLOpener: ---");
-	}
-#endif
 }
 
 NaClURLOpener::State NaClURLOpener::open()

@@ -28,13 +28,20 @@
 			req.open("GET", "code.hex", false);
 			req.send();
 
-			if (req.status == 200)
+			if (req.status == 200) {
 				module.postMessage("run:" + req.responseText);
+				set_status("program running");
+			} else {
+				set_status("code loading failed");
+			}
 		}
 
 		function handle_message(event) {
 			if (event.data == "done:") {
 				handle_done();
+
+			} else if (event.data.substring(0, 7) == "stdout:") {
+				handle_stdout(event.data.substring(7));
 
 			} else if (event.data.substring(0, 6) == "error:") {
 				handle_error(event.data.substring(6));
@@ -48,7 +55,11 @@
 		}
 
 		function handle_done() {
-			console.log("DONE");
+			set_status("program finished");
+		}
+
+		function handle_stdout(param) {
+			document.getElementById("stdout").innerHTML += param;
 		}
 
 		function handle_error(param) {
@@ -57,12 +68,17 @@
 
 		function handle_trace(param) {
 			console.log("TRACE: " + param);
+			document.getElementById("trace").innerHTML = param;
+		}
+
+		function set_status(value) {
+			document.getElementById("status").innerHTML = value;
 		}
 	</script>
 </head>
 
-<body onload="page_loaded()">
-	<div id="listener">
+<body onload="page_loaded()" style="font-family: sans-serif, verdana, arial">
+	<div id="listener" style="height: 0">
 		<script type="text/javascript">
 			document.getElementById("listener").addEventListener("load", module_loaded, true);
 		</script>
@@ -73,6 +89,21 @@
 		       height="0"
 		       src="concrete_dbg.nmf"
 		       type="application/x-nacl" />
+	</div>
+
+	<table style="padding-bottom: 3pt">
+		<tr>
+			<td style="font-weight: bold">Status:</td>
+			<td id="status">Initializing</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold">Trace:</td>
+			<td><tt id="trace"></tt></td>
+		</tr>
+	</table>
+
+	<div style="background: black; color: white">
+		<pre id="stdout" style="margin: 0; padding: 4pt"></pre>
 	</div>
 </body>
 
