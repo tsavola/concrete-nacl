@@ -5,6 +5,7 @@
 config.mk
 core/
 dbg_*/
+examples/code.hex
 examples/httpd.py
 opt_*/
 scons.sh

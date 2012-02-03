@@ -1,9 +1,10 @@
 PLATFORM	:= pepper_16
+PYTHON		:= python3
 J		:= 1
 
 -include config.mk
 
-build:: scons.sh
+build:: scons.sh examples/code.hex
 	@ $(MAKE) -C concrete concrete/prepare O=../core
 	@ bash scons.sh -j$(J)
 
@@ -18,7 +19,7 @@ test:: examples/httpd.py
 	@ wget -q -O- "http://localhost:5103/?quit=1"
 
 examples/code.hex: examples/code.py
-	python3 -c "import sys; file = open('examples/code.py'); sys.stdout.write(marshal.dumps(compile(file.read(), 'examples/code.py', 'exec'))[8:].encode('hex'))" > $@
+	$(PYTHON) -c "import marshal, base64; x = base64.b16encode(marshal.dumps(compile(open('examples/code.py').read(), 'examples/code.py', 'exec'))); open('"$@"', 'wb').write(x)"
 
 scons.sh examples/httpd.py:
 	./bootstrap.sh $(SDK) $(PLATFORM)
@@ -30,4 +31,4 @@ clean::
 	rm -f concrete_x86_64.nexe concrete_x86_64_dbg.nexe
 	rm -rf dbg_x86_32 dbg_x86_64 opt_x86_32 opt_x86_64
 	rm -f .sconsign.dblite
-	rm -f scons.sh examples/httpd.py
+	rm -f scons.sh examples/code.hex examples/httpd.py

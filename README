@@ -1,6 +1,7 @@
 Dependencies:
 
-  Native Client SDK platform 15
+  Native Client SDK platform 15+
+  Python 3.1+                       (for generating bytecode)
 
 Build instructions:
 
