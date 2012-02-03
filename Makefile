@@ -17,8 +17,8 @@ test:: examples/httpd.py
 		"http://localhost:5103/concrete.html"
 	@ wget -q -O- "http://localhost:5103/?quit=1"
 
-examples/code.hex: examples/code.pyc
-	python -c "import sys; sys.stdout.write(sys.stdin.read()[8:].encode('hex'))" < examples/code.pyc > $@
+examples/code.hex: examples/code.py
+	python3 -c "import sys; file = open('examples/code.py'); sys.stdout.write(marshal.dumps(compile(file.read(), 'examples/code.py', 'exec'))[8:].encode('hex'))" > $@
 
 scons.sh examples/httpd.py:
 	./bootstrap.sh $(SDK) $(PLATFORM)
