@@ -5,7 +5,8 @@ Dependencies:
 
 Build instructions:
 
-  echo SDK=/path/to/nacl_sdk > config.mk
+  echo SDK=/path/to/nacl_sdk >  config.mk
+  echo PLATFORM=pepper_15    >> config.mk   (default is pepper_16)
   ./bootstrap.sh
   make
 
