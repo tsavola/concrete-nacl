@@ -7,7 +7,7 @@
  * version 2.1 of the License, or (at your option) any later version.
  */
 
-#include "concrete/modules/concrete.hpp"
+#include "concrete/modules/builtins.hpp"
 
 #include <nacl/instance.hpp>
 
