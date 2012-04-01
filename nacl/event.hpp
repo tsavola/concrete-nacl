@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011  Timo Savola
+ * Copyright (c) 2011, 2012  Timo Savola
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
 
 #include <ppapi/cpp/completion_callback.h>
 #include <ppapi/cpp/instance.h>
+#include <ppapi/utility/completion_callback_factory.h>
 
 #include <concrete/event.hpp>
 #include <concrete/util/noncopyable.hpp>

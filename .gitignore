@@ -1,12 +1,6 @@
-*.nexe
-*.nmf
 .chrome/
-.sconsign.dblite
 config.mk
-core/
-dbg_*/
+debug/
 dist/
-examples/code.hex
-examples/httpd.py
-opt_*/
-scons.sh
+test/code.hex
+test/httpd.py

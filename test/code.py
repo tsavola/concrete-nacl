@@ -22,4 +22,4 @@ print(repr(s), len(s))
 print("id(None) =", id(None))
 print(None, 1234.5 + passthrough(6.78), None)
 
-print("urlopen:", repr(tap.urlopen("test")))
+print("urlopen:", repr(str(tap.urlopen("test.txt"))))
